@@ -175,7 +175,9 @@ class Haproxy(object):
 
     def _update_haproxy(self, cfg):
         if Haproxy.cls_cfg != cfg:
-            logger.info("HAProxy configuration:\n%s" % cfg)
+            logger.info("HAProxy configuration has changed.")
+            # Logging the config file may be helpful in the future but is creating too many logs for now.
+            # logger.info("HAProxy configuration:\n%s" % cfg)
             Haproxy.cls_cfg = cfg
             if save_to_file(HAPROXY_CONFIG_FILE, cfg):
                 Haproxy.cls_process = UpdateHelper.run_reload(Haproxy.cls_process)
@@ -236,8 +238,8 @@ class Haproxy(object):
     def _config_global_section():
         cfg = OrderedDict()
 
-        statements = ["log %s local0" % RSYSLOG_DESTINATION,
-                      "log %s local1 notice" % RSYSLOG_DESTINATION,
+        statements = ["log %s local0 err" % RSYSLOG_DESTINATION,
+                      "log %s local1 err" % RSYSLOG_DESTINATION,
                       "log-send-hostname",
                       "maxconn %s" % MAXCONN,
                       "pidfile /var/run/haproxy.pid",
